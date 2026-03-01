@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar"; // Import the Navbar component
 import { Toaster } from "sonner"; // Import Toaster from sonner
+import { Suspense } from "react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,7 +36,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950 `}
       >
-        <Navbar /> {/* Render the Navbar */}
+        <Suspense fallback={<div className="h-20 bg-black" />}>
+          <Navbar />
+        </Suspense>
         <main className="pt-20">
           {" "}
           {/* Add padding-top to prevent content from going under the fixed Navbar */}
