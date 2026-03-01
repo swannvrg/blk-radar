@@ -1,0 +1,201 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Force les contrôles  de zoom Leaflet à passer sous la Navbar (z-1000) */
+.leaflet-control-container .leaflet-top, 
+.leaflet-control-container .leaflet-bottom {
+    z-index: 900 !important;
+}
+/* Désactivation totale de tous les tracés vectoriels bleus par défaut de Leaflet */
+.leaflet-pane svg path.leaflet-interactive[stroke="#222"],
+.leaflet-pane svg path.leaflet-interactive[stroke="#0033ff"],
+.leaflet-pane svg path.leaflet-interactive[stroke="blue"],
+.leaflet-cluster-spiderleg,
+.leaflet-cluster-spider-leg {
+    display: none !important;
+    visibility: hidden !important;
+    stroke-width: 0 !important;
+    opacity: 0 !important;
+}
+
+/* Stabilisation de la popup Leaflet */
+.leaflet-popup-content-wrapper {
+  background: transparent !important; /* Pour garder ton design BLK */
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+}
+
+.leaflet-popup-tip-container {
+  display: none; /* Supprime le petit triangle qui se décale souvent au dézoom */
+}
+
+/* Sécurité pour les navigateurs qui utilisent le moteur de rendu Canvas */
+.leaflet-container canvas {
+    /* Si tu n'utilises pas d'autres tracés volontaires, on peut forcer ici, 
+       mais le CSS ci-dessus suffit normalement pour le SVG */
+}
+
+/* Tooltip */
+/* ------------------------------------------ */
+/* Container principal du tooltip */
+.leaflet-tooltip.blk-radar-tooltip {
+  background-color: #000000 !important;
+  border: 1px solid rgba(234, 179, 8, 0.3) !important;
+  color: white !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  font-family: inherit;
+  
+  /* Lueur jaune BLK RADAR */
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.9),
+    0 0 10px rgba(234, 179, 8, 0.25) !important;
+}
+
+/* La petite flèche (on garde la forme de base mais on change la couleur) */
+.leaflet-tooltip-top.blk-radar-tooltip:before {
+  border-top-color: rgba(234, 179, 8, 0.3) !important; /* Couleur du fond du tooltip */
+  /* On peut ajouter une ombre très légère à la flèche aussi */
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
+}
+
+/* Pour s'assurer que la flèche reste bien centrée sous la boîte */
+.leaflet-tooltip.blk-radar-tooltip {
+  margin-top: -10px;
+}
+/* ------------------------------------------ */
+
+
+/* POP UP */
+/* ------------------------------------------ */
+/* Suppression globale des scrollbars par défaut pour forcer le style BLK */
+@layer base {
+  /* 1. Configuration de base */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #27272a #09090b;
+  }
+
+  /* 2. Container de la scrollbar */
+  *::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  /* 3. SUPPRESSION TOTALE DES FLÈCHES (Indispensable) */
+  /* On cible absolument tous les états des boutons pour les faire disparaître */
+  *::-webkit-scrollbar-button,
+  *::-webkit-scrollbar-button:single-button,
+  *::-webkit-scrollbar-button:vertical:start:increment,
+  *::-webkit-scrollbar-button:vertical:start:decrement,
+  *::-webkit-scrollbar-button:vertical:end:increment,
+  *::-webkit-scrollbar-button:vertical:end:decrement,
+  *::-webkit-scrollbar-button:horizontal:start:increment,
+  *::-webkit-scrollbar-button:horizontal:start:decrement,
+  *::-webkit-scrollbar-button:horizontal:end:increment,
+  *::-webkit-scrollbar-button:horizontal:end:decrement {
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
+  }
+
+  /* 4. Le Rail (Track) */
+  *::-webkit-scrollbar-track {
+    background: #09090b !important;
+    border-radius: 10px !important;
+  }
+
+  /* 5. La Poignée (Thumb) */
+  *::-webkit-scrollbar-thumb {
+    background: #27272a !important;
+    border-radius: 10px !important;
+    /* La bordure permet d'éviter que la barre ne "morde" les bords arrondis */
+    border: 1px solid #09090b !important;
+  }
+
+  /* 6. Effet Hover Doré BLK RADAR */
+  *::-webkit-scrollbar-thumb:hover {
+    background: #FFD700 !important;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4) !important;
+  }
+
+  /* Cache aussi le coin si scroll horizontal + vertical */
+  *::-webkit-scrollbar-corner {
+    background: transparent !important;
+  }
+}
+/* ------------------------------------------ */
+
+/* ANNIMATION RADAR */
+/* ------------------------------------------ */
+@keyframes radar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+/* ------------------------------------------ */
+
+/* POP UP MAP  */
+/* ------------------------------------------ */
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.leaflet-popup-tip {
+  background: #09090b !important; /* Correspond au Zinc-950 */
+  border: 1px solid rgba(234, 179, 8, 0.5);
+}
+
+.custom-popup .leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+}
+
+/* Pour permettre le défilement interne si nécessaire sans barre moche */
+.custom-popup-scroll {
+  max-height: 120px;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.custom-popup-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* ------------------------------------------ */
