@@ -26,6 +26,10 @@ body {
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Force les contrôles  de zoom Leaflet à passer sous la Navbar (z-1000) */
 .leaflet-control-container .leaflet-top, 
 .leaflet-control-container .leaflet-bottom {

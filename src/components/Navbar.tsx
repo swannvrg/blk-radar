@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useUserRole } from "../hooks/useUserRole";
+import { LogOut } from "lucide-react";
 
 const Navbar: React.FC = () => {
   const pathname = usePathname();
@@ -14,13 +15,24 @@ const Navbar: React.FC = () => {
   const isTalentPage = pathname.startsWith("/talents/");
   const talentId = isTalentPage ? pathname.split("/").pop() : null;
 
-  // Récupération du rôle via le hook
   const { role } = useUserRole(talentId as any);
 
   const handleBackToMap = (e: React.MouseEvent) => {
     e.preventDefault();
     window.scrollTo(0, 0);
     router.push("/");
+  };
+
+  const handleLogout = () => {
+    // Supprime la clé admin principale
+    localStorage.removeItem('BLK_ADMIN_KEY');
+    
+    // Optionnel : On peut aussi nettoyer les tokens talents par sécurité
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('BLK_TOKEN_')) localStorage.removeItem(key);
+    });
+    
+    window.location.href = "/"; 
   };
 
   return (
@@ -70,39 +82,49 @@ const Navbar: React.FC = () => {
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-500 transition-all duration-300 group-hover:w-full"></span>
           </Link>
 
-          {/* BOUTON ACTION (REMIS SELON TON ANCIENNE STRUCTURE) */}
-          {role === "admin" || (role === "talent" && isTalentPage) ? (
-            // SI ADMIN OU TALENT SUR SA PAGE : MODIFIER
-            isTalentPage && talentId ? (
-              <Link href={`/admin/edit/${talentId}`} className={baseStyles}>
-                {role === "talent" ? "MODIFIER MON PROFIL" : "MODIFIER"}
-              </Link>
+          <div className="flex items-center gap-4">
+            {/* BOUTON ACTION PRINCIPAL */}
+            {role === "admin" || (role === "talent" && isTalentPage) ? (
+              isTalentPage && talentId ? (
+                <Link href={`/admin/edit/${talentId}`} className={baseStyles}>
+                  {role === "talent" ? "MODIFIER MON PROFIL" : "MODIFIER"}
+                </Link>
+              ) : (
+                <Link href="/admin/add" className={baseStyles}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  Ajouter Talent
+                </Link>
+              )
             ) : (
-              // SI ADMIN MAIS PAS SUR PAGE TALENT : AJOUTER
-              <Link href="/admin/add" className={baseStyles}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                Ajouter Talent
+              <Link href="/#form-talent" className={baseStyles}>
+                NOUS REJOINDRE
               </Link>
-            )
-          ) : (
-            // PAR DÉFAUT : NOUS REJOINDRE
-            <Link href="/radar#form" className={baseStyles}>
-              NOUS REJOINDRE
-            </Link>
-          )}
+            )}
+
+            {/* BOUTON LOGOUT : EXCLUSIVEMENT POUR L'ADMIN GLOBAL */}
+            {role === "admin" && (
+              <button
+                onClick={handleLogout}
+                className="p-2 text-white/30 hover:text-red-500 transition-colors duration-300 ml-2"
+                title="Quitter le mode Admin"
+              >
+                <LogOut size={20} />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </nav>

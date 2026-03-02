@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Send, X } from "lucide-react";
 import { sendInterviewEmail } from "@/app/actions/sendEmail"; // Vérifie ce chemin
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";    
+import { useRouter } from "next/navigation";
 
 export default function DemandeInterviewForm() {
   // 1. DÉCLARATION DES VARIABLES (Ce qui manquait)
@@ -35,13 +35,19 @@ export default function DemandeInterviewForm() {
   };
 
   // LOGIQUE D'ENVOI
- const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
       const result = await sendInterviewEmail({
-        nom, prenom, email, description, ambitions, attentes, socials 
+        nom,
+        prenom,
+        email,
+        description,
+        ambitions,
+        attentes,
+        socials,
       });
 
       if (result.error) throw new Error(result.error);
@@ -57,10 +63,9 @@ export default function DemandeInterviewForm() {
       // -----------------------------
 
       toast.success("Demande envoyée ! Le formulaire a été réinitialisé.");
-      
+
       // Si tu veux quand même rediriger après un petit délai :
       setTimeout(() => router.push("/"), 2000);
-
     } catch (error) {
       toast.error("Échec de l'envoi.");
     } finally {
@@ -68,8 +73,22 @@ export default function DemandeInterviewForm() {
     }
   };
 
+  useEffect(() => {
+    if (window.location.hash === "#form-talent") {
+      setTimeout(() => {
+        const element = document.getElementById("form-talent");
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 500); // On attend 500ms que la page et la carte soient chargées
+    }
+  }, []);
+
   return (
-    <section className="w-full bg-zinc-950 overflow-hidden border-none p-0 m-0">
+    <section
+      className="w-full bg-zinc-950 overflow-hidden border-none p-0 m-0 "
+      id="form-talent"
+    >
       {/* LIGNE JAUNE HAUT : Longue et fine */}
       <div className="w-2/3 h-[1px] bg-yellow-500/40 mx-auto mt-12 shadow-[0_0_10px_rgba(234,179,8,0.2)]"></div>
 
@@ -100,7 +119,7 @@ export default function DemandeInterviewForm() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-black/5 border-b border-black p-2 outline-none font-black text-black placeholder:text-black/30 text-s"
+                  className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all"
                   placeholder="TON MAIL"
                   required
                 />
@@ -109,14 +128,14 @@ export default function DemandeInterviewForm() {
                   <input
                     value={nom}
                     onChange={(e) => setNom(e.target.value)}
-                    className="w-full bg-black/5 border-b border-black p-2 outline-none font-black text-black placeholder:text-black/30 text-s"
+                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all"
                     placeholder="NOM"
                     required
                   />
                   <input
                     value={prenom}
                     onChange={(e) => setPrenom(e.target.value)}
-                    className="w-full bg-black/5 border-b border-black p-2 outline-none font-black text-black placeholder:text-black/30 text-s"
+                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all"
                     placeholder="PRÉNOM"
                     required
                   />
@@ -126,7 +145,7 @@ export default function DemandeInterviewForm() {
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-black/5 border-b border-black p-2 outline-none font-black text-black placeholder:text-black/30 text-s"
+                  className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all resize-none"
                   placeholder="TON PROJET..."
                   required
                 />
@@ -136,14 +155,14 @@ export default function DemandeInterviewForm() {
                     rows={2}
                     value={ambitions}
                     onChange={(e) => setAmbitions(e.target.value)}
-                    className="w-full bg-black/5 border-b border-black p-2 outline-none font-black text-black placeholder:text-black/30 text-s"
+                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all resize-none"
                     placeholder="TES AMBITIONS ?"
                   />
                   <textarea
                     rows={2}
                     value={attentes}
                     onChange={(e) => setAttentes(e.target.value)}
-                    className="w-full bg-black/5 border-b border-black p-2 outline-none font-black text-black placeholder:text-black/30 text-s"
+                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all resize-none"
                     placeholder="POURQUOI NOUS ?"
                   />
                 </div>
@@ -154,35 +173,39 @@ export default function DemandeInterviewForm() {
                     <select
                       value={selectedPlatform}
                       onChange={(e) => setSelectedPlatform(e.target.value)}
-                      className="bg-black  rounded-md px-3 text-[13px] font-black text-white"
+                      className="bg-black rounded-xl px-3 text-[13px] font-black text-white outline-none cursor-pointer"
                     >
                       <option value="instagram">INSTAGRAM</option>
                       <option value="tiktok">TIKTOK</option>
-                      <option value="tiktok">AUTRE</option>
+                      <option value="autre">AUTRE</option>
                     </select>
                     <input
                       value={platformUrl}
                       onChange={(e) => setPlatformUrl(e.target.value)}
-                      className="flex-1 bg-black/5 border border-black/20 rounded-md px-3 py-2 text-xs font-black !text-black placeholder:text-black/40 outline-none"
+                      className="flex-1 bg-black/5 border border-black/20 rounded-xl px-4 py-3 text-xs font-black !text-black placeholder:text-black/40 outline-none focus:border-black transition-all"
                       placeholder="URL OU @PSEUDO"
                     />
                     <button
                       type="button"
                       onClick={addSocial}
-                      className="bg-black  px-4 rounded-md text-[13px] font-black font-black text-white"
+                      className="bg-black px-6 rounded-xl text-[13px] font-black text-white hover:scale-105 active:scale-95 transition-all"
                     >
                       OK
                     </button>
                   </div>
+
                   <div className="flex flex-wrap gap-1">
                     {Object.entries(socials).map(([key, val]) => (
                       <div
                         key={key}
-                        className="bg-black text-white px-2 py-1 rounded-full text-[11px] flex items-center gap-2"
+                        className="bg-black text-white px-3 py-1.5 rounded-full text-[11px] flex items-center gap-2"
                       >
-                        <span className=" uppercase">{key}</span>
-                        <button onClick={() => removeSocial(key)}>
-                          <X size={10} />
+                        <span className="uppercase tracking-wider">{key}</span>
+                        <button
+                          onClick={() => removeSocial(key)}
+                          className="hover:text-red-500 transition-colors"
+                        >
+                          <X size={12} />
                         </button>
                       </div>
                     ))}
@@ -192,7 +215,7 @@ export default function DemandeInterviewForm() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-black text-[#EAB308] text-sm font-black py-4 rounded-xl active:scale-95 transition-all"
+                  className="w-full bg-black text-[#EAB308] text-sm font-black py-4 rounded-xl active:scale-[0.98] hover:opacity-90 transition-all shadow-lg"
                 >
                   {isSubmitting ? "ENVOI EN COURS..." : "ENVOYER LA DEMANDE"}
                 </button>
