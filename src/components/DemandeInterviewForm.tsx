@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Send, X } from "lucide-react";
-import { sendInterviewEmail } from "@/app/actions/sendEmail"; // Vérifie ce chemin
+import { X, Plus } from "lucide-react";
+import { sendInterviewEmail } from "@/app/actions/sendEmail";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export default function DemandeInterviewForm() {
-  // 1. DÉCLARATION DES VARIABLES (Ce qui manquait)
   const [nom, setNom] = useState("");
   const [prenom, setPrenom] = useState("");
   const [email, setEmail] = useState("");
   const [description, setDescription] = useState("");
   const [ambitions, setAmbitions] = useState("");
   const [attentes, setAttentes] = useState("");
+  const [messageLibre, setMessageLibre] = useState("");
   const [socials, setSocials] = useState<Record<string, string>>({});
 
   const [selectedPlatform, setSelectedPlatform] = useState("instagram");
@@ -21,7 +21,6 @@ export default function DemandeInterviewForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  // Gestion des réseaux sociaux
   const addSocial = () => {
     if (!platformUrl) return;
     setSocials({ ...socials, [selectedPlatform]: platformUrl });
@@ -34,7 +33,6 @@ export default function DemandeInterviewForm() {
     setSocials(newSocials);
   };
 
-  // LOGIQUE D'ENVOI
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -47,24 +45,22 @@ export default function DemandeInterviewForm() {
         description,
         ambitions,
         attentes,
+        messageLibre,
         socials,
       });
 
       if (result.error) throw new Error(result.error);
 
-      // --- LE RESET COMMENCE ICI ---
       setNom("");
       setPrenom("");
       setEmail("");
       setDescription("");
       setAmbitions("");
       setAttentes("");
+      setMessageLibre("");
       setSocials({});
-      // -----------------------------
 
       toast.success("Demande envoyée ! Le formulaire a été réinitialisé.");
-
-      // Si tu veux quand même rediriger après un petit délai :
       setTimeout(() => router.push("/"), 2000);
     } catch (error) {
       toast.error("Échec de l'envoi.");
@@ -80,7 +76,7 @@ export default function DemandeInterviewForm() {
         if (element) {
           element.scrollIntoView({ behavior: "smooth" });
         }
-      }, 500); // On attend 500ms que la page et la carte soient chargées
+      }, 500);
     }
   }, []);
 
@@ -89,14 +85,12 @@ export default function DemandeInterviewForm() {
       className="w-full bg-zinc-950 overflow-hidden border-none p-0 m-0 "
       id="form-talent"
     >
-      {/* LIGNE JAUNE HAUT : Longue et fine */}
       <div className="w-2/3 h-[1px] bg-yellow-500/40 mx-auto mt-12 shadow-[0_0_10px_rgba(234,179,8,0.2)]"></div>
 
       <div className="max-w-7xl mx-auto px-6 py-20">
-        <div className="grid md:grid-cols-2 gap-12 items-stretch">
-          {/* GAUCHE : TEXTE ÉDITORIAL (Comble le vide) */}
+        <div className="grid grid-cols-1 min-[900px]:grid-cols-2 gap-12 items-stretch">
           <div className="flex flex-col justify-center space-y-6">
-            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.8] text-white">
+            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.75] text-white">
               TON TALENT <br />
               <span className="text-yellow-500 italic">MÉRITE</span> <br />
               D'ÊTRE VU.
@@ -107,19 +101,18 @@ export default function DemandeInterviewForm() {
             </p>
           </div>
 
-          {/* DROITE : FORMULAIRE JAUNE */}
-          <div className="relative bg-[#EAB308] p-8 md:p-12 rounded-[32px] shadow-2xl overflow-hidden">
-            <div className="relative z-10">
+          <div className="relative bg-[#EAB308] p-8 md:p-12 rounded-[32px] shadow-2xl overflow-hidden max-w-full">
+            <div className="relative z-10 w-full">
               <h2 className="text-4xl font-black uppercase tracking-tighter mb-8 text-black">
-                REJOINS LE <span className="italic underline">RADAR !</span>
+                REJOINS LE RADAR&nbsp;!
               </h2>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4 w-full">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all"
+                  className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm max-[1150px]:min-[900px]:text-[13px] max-[450px]:text-[13px] focus:border-black transition-all"
                   placeholder="TON MAIL"
                   required
                 />
@@ -128,14 +121,14 @@ export default function DemandeInterviewForm() {
                   <input
                     value={nom}
                     onChange={(e) => setNom(e.target.value)}
-                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all"
+                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm max-[1150px]:min-[900px]:text-[13px] max-[450px]:text-[13px] focus:border-black transition-all"
                     placeholder="NOM"
                     required
                   />
                   <input
                     value={prenom}
                     onChange={(e) => setPrenom(e.target.value)}
-                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all"
+                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm max-[1150px]:min-[900px]:text-[13px] max-[450px]:text-[13px] focus:border-black transition-all"
                     placeholder="PRÉNOM"
                     required
                   />
@@ -145,55 +138,61 @@ export default function DemandeInterviewForm() {
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all resize-none"
+                  className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm max-[1150px]:min-[900px]:text-[13px] max-[450px]:text-[13px] focus:border-black transition-all resize-none"
                   placeholder="TON PROJET..."
                   required
                 />
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 max-[400px]:grid-cols-1 gap-3">
                   <textarea
                     rows={2}
                     value={ambitions}
                     onChange={(e) => setAmbitions(e.target.value)}
-                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all resize-none"
-                    placeholder="TES AMBITIONS ?"
+                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm max-[1150px]:min-[900px]:text-[13px] max-[450px]:text-[13px] focus:border-black transition-all resize-none"
+                    placeholder="TES AMBITIONS&nbsp;?"
                   />
                   <textarea
                     rows={2}
                     value={attentes}
                     onChange={(e) => setAttentes(e.target.value)}
-                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm focus:border-black transition-all resize-none"
-                    placeholder="POURQUOI NOUS ?"
+                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm max-[1150px]:min-[900px]:text-[13px] max-[450px]:text-[13px] focus:border-black transition-all resize-none"
+                    placeholder="POURQUOI NOUS&nbsp;?"
                   />
                 </div>
 
-                {/* RÉSEAUX */}
-                <div className="pt-2 space-y-3">
-                  <div className="flex gap-2">
+                {/* RÉSEAUX - CORRECTION FINALE DES PALIERS */}
+                <div className="pt-2 space-y-3 w-full">
+                  <div className="flex flex-wrap gap-2 items-start w-full">
                     <select
                       value={selectedPlatform}
                       onChange={(e) => setSelectedPlatform(e.target.value)}
-                      className="bg-black rounded-xl px-3 text-[13px] font-black text-white outline-none cursor-pointer"
+                      // Utilisation de w-fit pour qu'il ne prenne que la place de son texte
+                      // On retire flex-1 pour éviter qu'il ne s'étire
+                      className="bg-black rounded-xl px-4 h-[45px] text-[12px] font-black text-white outline-none cursor-pointer w-fit min-w-[130px] flex-none"
                     >
                       <option value="instagram">INSTAGRAM</option>
                       <option value="tiktok">TIKTOK</option>
                       <option value="autre">AUTRE</option>
                     </select>
-                    <input
-                      value={platformUrl}
-                      onChange={(e) => setPlatformUrl(e.target.value)}
-                      className="flex-1 bg-black/5 border border-black/20 rounded-xl px-4 py-3 text-xs font-black !text-black placeholder:text-black/40 outline-none focus:border-black transition-all"
-                      placeholder="URL OU @PSEUDO"
-                    />
-                    <button
-                      type="button"
-                      onClick={addSocial}
-                      className="bg-black px-6 rounded-xl text-[13px] font-black text-white hover:scale-105 active:scale-95 transition-all"
-                    >
-                      OK
-                    </button>
+
+                    <div className="flex flex-1 gap-2 min-w-0 min-[1100px]:min-w-[200px] max-[1100px]:min-[900px]:min-w-full max-[640px]:min-w-full">
+                      <input
+                        value={platformUrl}
+                        onChange={(e) => setPlatformUrl(e.target.value)}
+                        className="flex-1 min-w-0 bg-black/5 border border-black/20 rounded-xl px-4 py-3 text-xs font-black !text-black placeholder:text-black/40 outline-none focus:border-black transition-all"
+                        placeholder="URL OU @PSEUDO"
+                      />
+                      <button
+                        type="button"
+                        onClick={addSocial}
+                        className="bg-black w-[45px] h-[45px] shrink-0 flex items-center justify-center rounded-xl text-white hover:scale-105 active:scale-95 transition-all"
+                      >
+                        <Plus size={20} strokeWidth={3} />
+                      </button>
+                    </div>
                   </div>
 
+                  {/* Badges des réseaux ajoutés */}
                   <div className="flex flex-wrap gap-1">
                     {Object.entries(socials).map(([key, val]) => (
                       <div
@@ -202,6 +201,7 @@ export default function DemandeInterviewForm() {
                       >
                         <span className="uppercase tracking-wider">{key}</span>
                         <button
+                          type="button"
                           onClick={() => removeSocial(key)}
                           className="hover:text-red-500 transition-colors"
                         >
@@ -211,11 +211,20 @@ export default function DemandeInterviewForm() {
                     ))}
                   </div>
                 </div>
+                <div className="pt-2">
+                  <textarea
+                    rows={2}
+                    value={messageLibre}
+                    onChange={(e) => setMessageLibre(e.target.value)}
+                    className="w-full bg-black/5 border border-black/20 rounded-xl px-4 py-3 outline-none font-black text-black placeholder:text-black/30 text-sm max-[1150px]:min-[900px]:text-[13px] max-[450px]:text-[13px] focus:border-black transition-all resize-none"
+                    placeholder="AUTRE CHOSE&nbsp;?"
+                  />
+                </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-black text-[#EAB308] text-sm font-black py-4 rounded-xl active:scale-[0.98] hover:opacity-90 transition-all shadow-lg"
+                  className="w-full bg-black text-[#EAB308] text-sm font-black py-4 rounded-xl active:scale-[0.98] hover:opacity-90 transition-all shadow-lg mt-4"
                 >
                   {isSubmitting ? "ENVOI EN COURS..." : "ENVOYER LA DEMANDE"}
                 </button>
@@ -225,7 +234,6 @@ export default function DemandeInterviewForm() {
         </div>
       </div>
 
-      {/* LIGNE JAUNE BAS : Longue et fine */}
       <div className="w-2/3 h-[1px] bg-yellow-500/40 mx-auto mb-12 shadow-[0_0_10px_rgba(234,179,8,0.2)]"></div>
     </section>
   );
