@@ -9,7 +9,7 @@ import Link from "next/link";
 import React, { useState, useEffect, useMemo } from "react";
 import { useMap } from "react-leaflet";
 import { X } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useCallback  } from "react";
 
 // Interface pour les talents
 interface Talent {
@@ -269,6 +269,11 @@ const MapComponent: React.FC<MapComponentProps> = React.memo(
       fetchTalents();
     }, []);
 
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+      setIsMobile(window.innerWidth < 768);
+    }, []);
+
     const centerFrance = [46.603355, 1.888334] as [number, number];
 
     const filteredTalents = useMemo(() => {
@@ -369,6 +374,20 @@ const MapComponent: React.FC<MapComponentProps> = React.memo(
         return matchSpecialty && matchCity && matchName;
       });
     }, [talents, filters]);
+
+    const [scrollLocked, setScrollLocked] = useState(true); // map désactivée par défaut sur mobile
+    const [showTwoFingerHint, setShowTwoFingerHint] = useState(false);
+    const hintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Handler pour détecter le touch à 1 doigt sur la map
+    const handleMapTouchStart = useCallback((e: React.TouchEvent) => {
+      if (e.touches.length === 1 && scrollLocked) {
+        // Affiche le hint "2 doigts"
+        setShowTwoFingerHint(true);
+        if (hintTimeoutRef.current) clearTimeout(hintTimeoutRef.current);
+        hintTimeoutRef.current = setTimeout(() => setShowTwoFingerHint(false), 1500);
+      }
+    }, [scrollLocked]);
 
     return (
       <div className="relative w-full h-[80vh] bg-zinc-950">
